@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>For Christine 💖</title>
-
 <style>
 body {
   margin: 0;
@@ -14,6 +13,7 @@ body {
   align-items: center;
   font-family: Arial, sans-serif;
   overflow: hidden;
+  position: relative;
 }
 
 .card {
@@ -67,15 +67,8 @@ button {
   margin: 12px;
 }
 
-#yes {
-  background: #e91e63;
-  color: white;
-}
-
-#no {
-  background: #ccc;
-  position: absolute;
-}
+#yes { background: #e91e63; color: white; }
+#no { background: #ccc; position: absolute; }
 
 .floating {
   position: fixed;
@@ -86,20 +79,22 @@ button {
 }
 
 @keyframes floatUp {
-  from {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(-900px);
-    opacity: 0;
-  }
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-900px); opacity: 0; }
+}
+
+#puppy {
+  position: fixed;
+  width: 120px;
+  bottom: -150px;
+  left: -150px;
+  transition: transform 4s linear;
+  z-index: 3;
 }
 </style>
 </head>
 
 <body>
-
 <div class="card" id="content">
   <h1>💌 For Christine 💌</h1>
   <p>I made something just for you…</p>
@@ -141,13 +136,23 @@ function openEnvelope() {
       <h1>YAY!!! 💖🌸</h1>
       <p>
         You just made me the happiest person 😄<br><br>
-        I can’t wait to spend Valentine’s Day with you 💕
+        Thank you for being you 💕
       </p>
       <p style="margin-top:20px;">
         Love you always ❤️
       </p>
     `;
 
+    // Puppy image
+    const puppy = document.createElement("img");
+    puppy.src = "https://i.imgur.com/puppy-rose.png"; // replace if desired
+    puppy.id = "puppy";
+    document.body.appendChild(puppy);
+    setTimeout(() => {
+      puppy.style.transform = "translate(400px, -400px)"; // moves puppy diagonally toward screen
+    }, 100);
+
+    // Floating hearts & flowers
     setInterval(() => {
       const item = document.createElement("div");
       item.className = "floating";
@@ -156,9 +161,31 @@ function openEnvelope() {
       document.body.appendChild(item);
       setTimeout(() => item.remove(), 5000);
     }, 200);
+
+    // Sparkles
+    setInterval(() => {
+      const sparkle = document.createElement("div");
+      sparkle.className = "floating";
+      sparkle.innerHTML = "✨";
+      sparkle.style.fontSize = (10 + Math.random() * 14) + "px";
+      sparkle.style.left = Math.random() * window.innerWidth + "px";
+      document.body.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 3000);
+    }, 400);
+
+    // Balloons
+    setInterval(() => {
+      const balloon = document.createElement("div");
+      balloon.className = "floating";
+      const colors = ["🎈","🎉","💌"];
+      balloon.innerHTML = colors[Math.floor(Math.random()*colors.length)];
+      balloon.style.fontSize = (20 + Math.random()*15) + "px";
+      balloon.style.left = Math.random() * window.innerWidth + "px";
+      document.body.appendChild(balloon);
+      setTimeout(() => balloon.remove(), 4000);
+    }, 600);
   });
 }
 </script>
-
 </body>
 </html>
