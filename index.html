@@ -34,19 +34,18 @@ body {
   position: relative;
   margin: 0 auto;
   cursor: pointer;
-  transition: transform 0.5s;
+  overflow: hidden;
 }
 
-.envelope::before {
-  content: "";
+.envelope-flap {
   position: absolute;
   top: 0;
   left: 0;
-  width: 0;
-  height: 0;
-  border-left: 110px solid transparent;
-  border-right: 110px solid transparent;
-  border-top: 70px solid #ff6f91;
+  width: 220px;
+  height: 70px;
+  background: #ff6f91;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top;
   transition: transform 0.5s;
 }
 
@@ -115,6 +114,7 @@ button {
   <p>I made something just for you…</p>
 
   <div class="envelope" onclick="openEnvelope()">
+    <div class="envelope-flap"></div>
     <div class="envelope-text">OPEN ME</div>
   </div>
 
@@ -130,8 +130,11 @@ const puppy=document.getElementById("puppy");
 const pawSound=document.getElementById("pawSound");
 const popSound=document.getElementById("popSound");
 
-function envelopeHelper(){
+function openEnvelope(){
+  // Play paw sound
   pawSound.play();
+
+  // Puppy jumps to envelope
   let left=-100, bottom=-50;
   let interval=setInterval(()=>{
     if(left<50){ left+=5; bottom+=3; }
@@ -140,30 +143,21 @@ function envelopeHelper(){
     if(left>=50) clearInterval(interval);
   },50);
 
-  const env=document.querySelector(".envelope");
-  // flap animation
-  setTimeout(()=>{ env.style.transform="rotateX(180deg)"; },200);
-  setTimeout(()=>{ env.style.transform="rotateX(0deg)"; },700);
-}
-
-function openEnvelope(){
-  envelopeHelper();
+  // Animate flap open
+  const flap=document.querySelector(".envelope-flap");
+  flap.style.transform="rotateX(180deg)";
 
   setTimeout(()=>{
+    // Show question scene
     document.getElementById("content").innerHTML=`
       <h1 id="christineName">Christine 💕</h1>
-      <p>
-        You make my days brighter,<br>
-        my laughs louder,<br>
-        and my heart happier 🥰
-      </p>
+      <p>You make my days brighter,<br>my laughs louder,<br>and my heart happier 🥰</p>
       <h2 style="color:#e91e63;">Will you be my Valentine? 💖</h2>
-
       <button id="yes">YES 💘</button>
       <button id="no">NO 🙃</button>
     `;
 
-    // Puppy shakes head
+    // Puppy beside text, shaking
     puppy.style.left="50px";
     puppy.style.bottom="50px";
     let shake=0;
@@ -179,16 +173,11 @@ function openEnvelope(){
     document.getElementById("yes").addEventListener("click", ()=>{
       document.getElementById("content").innerHTML=`
         <h1>YAY!!! 💖🌸</h1>
-        <p>
-          You just made me the happiest person 😄<br><br>
-          Thank you for being you 💕
-        </p>
-        <p style="margin-top:20px;">
-          Love you always ❤️
-        </p>
+        <p>You just made me the happiest person 😄<br><br>Thank you for being you 💕</p>
+        <p style="margin-top:20px;">Love you always ❤️</p>
       `;
 
-      // Puppy runs diagonally bouncing
+      // Puppy runs bouncing
       let bounce=0;
       let runInterval=setInterval(()=>{
         bounce+=0.5;
@@ -211,7 +200,7 @@ function openEnvelope(){
         rose.style.top=roseY+"px";
         if(Math.abs(dx)<1 && Math.abs(dy)<1){
           clearInterval(roseInterval);
-          popSound.play(); // pop sound when rose lands
+          popSound.play(); // pop sound
         }
       },50);
 
