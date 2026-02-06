@@ -118,23 +118,16 @@ button {
 
 <img id="puppy" src="d6b73cf54edfc94c4fc5aa197c691e68.png">
 
-<audio id="pawSound" src="https://www.soundjay.com/button/sounds/button-16.mp3"></audio>
-<audio id="popSound" src="https://www.soundjay.com/button/sounds/button-10.mp3"></audio>
-
 <script>
 const puppy = document.getElementById("puppy");
-const pawSound = document.getElementById("pawSound");
-const popSound = document.getElementById("popSound");
 const envelope = document.getElementById("envelope");
 const content = document.getElementById("content");
 
-// Puppy animation state
-let state = "pawing"; // pawing, question, yesEnd
-
+let state = "pawing";
 let bounce = 0;
 let wag = 0;
 
-// Continuous animation loop
+// Puppy animation
 function animate(){
   bounce += 0.05;
   wag += 0.05;
@@ -153,7 +146,7 @@ function animate(){
 }
 animate();
 
-// Continuous rose petals around puppy
+// Rose petals
 setInterval(() => {
   createRosePetal(puppy.offsetLeft + 40, puppy.offsetTop + 20);
 }, 500);
@@ -170,7 +163,6 @@ function createRosePetal(x,y){
 
 // Envelope click
 envelope.addEventListener("click", () => {
-  pawSound.play();
   document.querySelector(".envelope-flap").style.transform = "rotateX(180deg)";
   setTimeout(showQuestion, 700);
 });
@@ -188,21 +180,13 @@ function showQuestion(){
   puppy.style.left = "50px";
   puppy.style.bottom = "50px";
 
-  // NO button dodges + puppy shakes head
+  // NO button moves
   const noBtn = document.getElementById("no");
   function moveNo(){
     const x = Math.random()*(window.innerWidth-120);
     const y = Math.random()*(window.innerHeight-120);
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
-
-    // Head shake
-    let headShakeStep = 0;
-    const interval = setInterval(()=>{
-      headShakeStep += 0.2;
-      puppy.style.transform = `translateX(${Math.sin(bounce)*10}px) rotate(${Math.sin(wag)*15}deg) rotate(${Math.sin(headShakeStep)*20}deg)`;
-    },50);
-    setTimeout(()=>clearInterval(interval),600);
   }
   noBtn.addEventListener("mouseover", moveNo);
   noBtn.addEventListener("click", moveNo);
@@ -216,10 +200,7 @@ function showQuestion(){
       <p style="margin-top:20px;">Love you always ❤️</p>
     `;
 
-    puppy.style.left = "60px";
-    puppy.style.bottom = "30px";
-
-    // floating hearts and flowers continuously
+    // floating hearts
     setInterval(()=>{
       const heart = document.createElement("div");
       heart.className="heart-overhead";
@@ -230,6 +211,7 @@ function showQuestion(){
       setTimeout(()=>heart.remove(),2000);
     },400);
 
+    // floating flowers/hearts
     setInterval(()=>{
       const item = document.createElement("div");
       item.className="floating";
@@ -238,10 +220,10 @@ function showQuestion(){
       document.body.appendChild(item);
       setTimeout(()=>item.remove(),5000);
     },300);
+
+    // 💌 Optionally: send YES response (see note below)
   });
-});
+}
 </script>
 </body>
 </html>
-
- 
