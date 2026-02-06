@@ -13,12 +13,12 @@ body {
   position: relative;
 }
 
+/* Transparent card container */
 .card {
-  background: white;
+  background: transparent; /* transparent instead of white */
   padding: 40px;
   border-radius: 25px;
   text-align: center;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.25);
   max-width: 90%;
   z-index: 2;
   position: relative;
@@ -78,11 +78,12 @@ button {
   z-index: 5;
 }
 
-.floating {
+/* Floating hearts and flowers */
+.floating-bg {
   position: fixed;
-  font-size: 26px;
-  animation: floatUp 5s linear forwards;
+  font-size: 24px;
   pointer-events: none;
+  animation: floatUp 10s linear infinite;
 }
 
 .heart-overhead {
@@ -146,20 +147,27 @@ function animate(){
 }
 animate();
 
-// Rose petals
-setInterval(() => {
-  createRosePetal(puppy.offsetLeft + 40, puppy.offsetTop + 20);
-}, 500);
+// Background floating hearts & flowers continuously
+setInterval(()=>{
+  const elem = document.createElement("div");
+  elem.className="floating-bg";
+  elem.innerHTML = Math.random()>0.5 ? "💖" : "🌸";
+  elem.style.left = Math.random()*window.innerWidth + "px";
+  elem.style.top = window.innerHeight + "px";
+  document.body.appendChild(elem);
+  setTimeout(()=>elem.remove(),10000);
+}, 400);
 
-function createRosePetal(x,y){
+// Rose petals near puppy
+setInterval(() => {
   const petal = document.createElement("div");
   petal.className="rosePetal";
   petal.innerHTML="🌹";
-  petal.style.left = x + "px";
-  petal.style.top = y + "px";
+  petal.style.left = puppy.offsetLeft + 40 + "px";
+  petal.style.top = puppy.offsetTop + 20 + "px";
   document.body.appendChild(petal);
   setTimeout(()=>petal.remove(),4000);
-}
+}, 500);
 
 // Envelope click
 envelope.addEventListener("click", () => {
@@ -180,7 +188,7 @@ function showQuestion(){
   puppy.style.left = "50px";
   puppy.style.bottom = "50px";
 
-  // NO button moves
+  // NO button moves & puppy shakes
   const noBtn = document.getElementById("no");
   function moveNo(){
     const x = Math.random()*(window.innerWidth-120);
@@ -200,7 +208,7 @@ function showQuestion(){
       <p style="margin-top:20px;">Love you always ❤️</p>
     `;
 
-    // floating hearts
+    // Floating hearts over puppy
     setInterval(()=>{
       const heart = document.createElement("div");
       heart.className="heart-overhead";
@@ -211,17 +219,6 @@ function showQuestion(){
       setTimeout(()=>heart.remove(),2000);
     },400);
 
-    // floating flowers/hearts
-    setInterval(()=>{
-      const item = document.createElement("div");
-      item.className="floating";
-      item.innerHTML=Math.random()>0.5?"💖":"🌸";
-      item.style.left=Math.random()*window.innerWidth+"px";
-      document.body.appendChild(item);
-      setTimeout(()=>item.remove(),5000);
-    },300);
-
-    // 💌 Optionally: send YES response (see note below)
   });
 }
 </script>
