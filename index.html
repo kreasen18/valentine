@@ -76,7 +76,6 @@ button {
   bottom: 50px;
   left: 50px;
   z-index: 5;
-  transition: transform 0.1s, left 0.1s, bottom 0.1s;
 }
 
 .floating {
@@ -100,12 +99,6 @@ button {
   animation: floatUp 4s linear forwards;
 }
 
-#rose {
-  position: fixed;
-  font-size: 24px;
-  pointer-events: none;
-}
-
 @keyframes floatUp {
   from { transform: translateY(0); opacity: 1; }
   to { transform: translateY(-900px); opacity: 0; }
@@ -113,10 +106,10 @@ button {
 </style>
 </head>
 <body>
+
 <div class="card" id="content">
   <h1 id="christineName">💌 For Christine 💌</h1>
   <p>I made something just for you…</p>
-
   <div class="envelope" id="envelope">
     <div class="envelope-flap"></div>
     <div class="envelope-text">OPEN ME</div>
@@ -135,12 +128,36 @@ const popSound = document.getElementById("popSound");
 const envelope = document.getElementById("envelope");
 const content = document.getElementById("content");
 
-// continuous rose petals around puppy
+// Puppy animation state
+let state = "pawing"; // pawing, question, yesEnd
+
+let bounce = 0;
+let wag = 0;
+
+// Continuous animation loop
+function animate(){
+  bounce += 0.05;
+  wag += 0.05;
+
+  if(state === "pawing"){
+    puppy.style.transform = `translateY(${Math.abs(Math.sin(bounce)*15)}px) rotate(${Math.sin(wag)*10}deg)`;
+  }
+  else if(state === "question"){
+    puppy.style.transform = `translateX(${Math.sin(bounce)*10}px) rotate(${Math.sin(wag)*15}deg)`;
+  }
+  else if(state === "yesEnd"){
+    puppy.style.transform = `translateY(${Math.abs(Math.sin(bounce)*10)}px) rotate(${Math.sin(wag)*15}deg)`;
+  }
+
+  requestAnimationFrame(animate);
+}
+animate();
+
+// Continuous rose petals around puppy
 setInterval(() => {
   createRosePetal(puppy.offsetLeft + 40, puppy.offsetTop + 20);
 }, 500);
 
-// function to create a rose petal
 function createRosePetal(x,y){
   const petal = document.createElement("div");
   petal.className="rosePetal";
@@ -151,26 +168,15 @@ function createRosePetal(x,y){
   setTimeout(()=>petal.remove(),4000);
 }
 
-// Puppy paws at envelope continuously
-let bounce = 0;
-let wag = 0;
-function pawAtEnvelope(){
-  bounce += 0.1;
-  wag += 0.1;
-  puppy.style.transform = `translateY(${Math.abs(Math.sin(bounce)*15)}px) rotate(${Math.sin(wag)*10}deg)`;
-  requestAnimationFrame(pawAtEnvelope);
-}
-pawAtEnvelope();
-
-// click envelope to open
+// Envelope click
 envelope.addEventListener("click", () => {
   pawSound.play();
   document.querySelector(".envelope-flap").style.transform = "rotateX(180deg)";
   setTimeout(showQuestion, 700);
 });
 
-// Show Valentine question scene
 function showQuestion(){
+  state = "question";
   content.innerHTML = `
       <h1 id="christineName">Christine 💕</h1>
       <p>You make my days brighter,<br>my laughs louder,<br>and my heart happier 🥰</p>
@@ -182,14 +188,7 @@ function showQuestion(){
   puppy.style.left = "50px";
   puppy.style.bottom = "50px";
 
-  // Puppy shakes tail continuously
-  let shake = 0, wag2 = 0;
-  setInterval(()=>{
-    shake+=0.2; wag2+=0.2;
-    puppy.style.transform = `translateX(${Math.sin(shake)*10}px) rotate(${Math.sin(wag2)*15}deg)`;
-  },100);
-
-  // NO button moves & puppy shakes head
+  // NO button dodges + puppy shakes head
   const noBtn = document.getElementById("no");
   function moveNo(){
     const x = Math.random()*(window.innerWidth-120);
@@ -198,10 +197,10 @@ function showQuestion(){
     noBtn.style.top = y + "px";
 
     // Head shake
-    let headShakeStep=0;
+    let headShakeStep = 0;
     const interval = setInterval(()=>{
-      headShakeStep+=0.2;
-      puppy.style.transform = `translateX(${Math.sin(shake)*10}px) rotate(${Math.sin(wag2)*15}deg) rotate(${Math.sin(headShakeStep)*20}deg)`;
+      headShakeStep += 0.2;
+      puppy.style.transform = `translateX(${Math.sin(bounce)*10}px) rotate(${Math.sin(wag)*15}deg) rotate(${Math.sin(headShakeStep)*20}deg)`;
     },50);
     setTimeout(()=>clearInterval(interval),600);
   }
@@ -210,22 +209,19 @@ function showQuestion(){
 
   // YES button click
   document.getElementById("yes").addEventListener("click",()=>{
+    state = "yesEnd";
     content.innerHTML=`
       <h1>YAY!!! 💖🌸</h1>
       <p>You just made me the happiest person 😄<br><br>Thank you for being you 💕</p>
       <p style="margin-top:20px;">Love you always ❤️</p>
     `;
 
-    // Puppy final animation: bouncing + tail wag + hearts
-    let bounceEnd=0, wagEnd=0;
-    setInterval(()=>{
-      bounceEnd+=0.1; wagEnd+=0.1;
-      puppy.style.transform = `translateY(${Math.abs(Math.sin(bounceEnd)*10)}px) rotate(${Math.sin(wagEnd)*15}deg)`;
-    },100);
+    puppy.style.left = "60px";
+    puppy.style.bottom = "30px";
 
-    // floating hearts around puppy
+    // floating hearts and flowers continuously
     setInterval(()=>{
-      const heart=document.createElement("div");
+      const heart = document.createElement("div");
       heart.className="heart-overhead";
       heart.innerHTML="💖";
       heart.style.left=(puppy.offsetLeft+40+Math.random()*40)+"px";
@@ -234,9 +230,8 @@ function showQuestion(){
       setTimeout(()=>heart.remove(),2000);
     },400);
 
-    // floating flowers and extra hearts
     setInterval(()=>{
-      const item=document.createElement("div");
+      const item = document.createElement("div");
       item.className="floating";
       item.innerHTML=Math.random()>0.5?"💖":"🌸";
       item.style.left=Math.random()*window.innerWidth+"px";
@@ -244,7 +239,7 @@ function showQuestion(){
       setTimeout(()=>item.remove(),5000);
     },300);
   });
-}
+});
 </script>
 </body>
 </html>
