@@ -13,9 +13,8 @@ body {
   position: relative;
 }
 
-/* Transparent card container */
 .card {
-  background: transparent; /* transparent instead of white */
+  background: transparent;
   padding: 40px;
   border-radius: 25px;
   text-align: center;
@@ -78,7 +77,6 @@ button {
   z-index: 5;
 }
 
-/* Floating hearts and flowers */
 .floating-bg {
   position: fixed;
   font-size: 24px;
@@ -98,6 +96,22 @@ button {
   position: fixed;
   font-size: 14px;
   animation: floatUp 4s linear forwards;
+}
+
+.balloon {
+  position: fixed;
+  font-size: 30px;
+  pointer-events: none;
+  animation: floatUp 15s linear forwards;
+}
+
+.sparkle {
+  position: fixed;
+  font-size: 18px;
+  color: #fff;
+  text-shadow: 0 0 5px #fff;
+  pointer-events: none;
+  animation: floatUp 12s linear forwards;
 }
 
 @keyframes floatUp {
@@ -147,18 +161,32 @@ function animate(){
 }
 animate();
 
-// Background floating hearts & flowers continuously
+// Background hearts, flowers, sparkles, balloons
 setInterval(()=>{
   const elem = document.createElement("div");
   elem.className="floating-bg";
-  elem.innerHTML = Math.random()>0.5 ? "💖" : "🌸";
+  const r = Math.random();
+  if(r<0.4) elem.innerHTML = "💖";
+  else if(r<0.7) elem.innerHTML = "🌸";
+  else elem.innerHTML = "✨";
   elem.style.left = Math.random()*window.innerWidth + "px";
   elem.style.top = window.innerHeight + "px";
   document.body.appendChild(elem);
   setTimeout(()=>elem.remove(),10000);
 }, 400);
 
-// Rose petals near puppy
+setInterval(()=>{
+  const balloon = document.createElement("div");
+  balloon.className="balloon";
+  const colors = ["🎈","🎈","🎈"];
+  balloon.innerHTML = colors[Math.floor(Math.random()*colors.length)];
+  balloon.style.left = Math.random()*window.innerWidth + "px";
+  balloon.style.top = window.innerHeight + "px";
+  document.body.appendChild(balloon);
+  setTimeout(()=>balloon.remove(),15000);
+}, 2000);
+
+// More rose petals near puppy
 setInterval(() => {
   const petal = document.createElement("div");
   petal.className="rosePetal";
@@ -167,7 +195,7 @@ setInterval(() => {
   petal.style.top = puppy.offsetTop + 20 + "px";
   document.body.appendChild(petal);
   setTimeout(()=>petal.remove(),4000);
-}, 500);
+}, 300);
 
 // Envelope click
 envelope.addEventListener("click", () => {
@@ -188,7 +216,6 @@ function showQuestion(){
   puppy.style.left = "50px";
   puppy.style.bottom = "50px";
 
-  // NO button moves & puppy shakes
   const noBtn = document.getElementById("no");
   function moveNo(){
     const x = Math.random()*(window.innerWidth-120);
@@ -202,10 +229,24 @@ function showQuestion(){
   // YES button click
   document.getElementById("yes").addEventListener("click",()=>{
     state = "yesEnd";
+
+    // Puppy runs towards screen
+    let pos = 50;
+    const runInterval = setInterval(()=>{
+      pos += 10;
+      puppy.style.left = pos + "px";
+      puppy.style.bottom = (50 + Math.abs(Math.sin(pos/10)*15)) + "px";
+      if(pos>window.innerWidth/2){
+        clearInterval(runInterval);
+      }
+    },30);
+
+    // Show final message
     content.innerHTML=`
       <h1>YAY!!! 💖🌸</h1>
       <p>You just made me the happiest person 😄<br><br>Thank you for being you 💕</p>
       <p style="margin-top:20px;">Love you always ❤️</p>
+      <p><a href="mailto:your-email@example.com?subject=Christine's Valentine&body=She said YES! 💖" style="font-size:20px; color:#e91e63; text-decoration:none;">Click here to send me a YES!</a></p>
     `;
 
     // Floating hearts over puppy
@@ -218,7 +259,6 @@ function showQuestion(){
       document.body.appendChild(heart);
       setTimeout(()=>heart.remove(),2000);
     },400);
-
   });
 }
 </script>
